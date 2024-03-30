@@ -21,6 +21,8 @@ let stockSymbolMapping: [String: String] = [
     "Walmart Inc": "WMT",
     "Coca-Cola Co": "KO",
     "Marathon Digital Holdings Inc": "MARA",
+    "Hut 8 Corp": "HUT",
+    "Bitfarms Ltd": "BITF",
     // ... additional mappings ...
 ]
 
@@ -53,24 +55,32 @@ extension ViewController{
         let finnhubApiKey = "cmacv81r01qid8gedk60cmacv81r01qid8gedk6g"
         let coinbaseApiKey = "57ca4572-298a-4b92-ba8d-ef6214b76ab1"
         
-        let isCrypto = isCryptocurrency(symbol: symbol)
+        var adjustedSymbol = symbol
+           
+        if adjustedSymbol.hasSuffix(".TO") {
+               adjustedSymbol = String(adjustedSymbol.dropLast(3))
+           }
+
+        let isCrypto = isCryptocurrency(symbol: adjustedSymbol)
         let urlString: String
         
+        
         if isCrypto {
-            urlString = "https://api.coinbase.com/v2/prices/\(symbol)-USD/spot"
+            urlString = "https://api.coinbase.com/v2/prices/\(adjustedSymbol)-USD/spot"
         } else {
-            urlString = "https://finnhub.io/api/v1/quote?symbol=\(symbol)&token=\(finnhubApiKey)"
+            urlString = "https://finnhub.io/api/v1/quote?symbol=\(adjustedSymbol)&token=\(finnhubApiKey)"
         }
         
+      
         guard let url = URL(string: urlString) else {
-            print("Invalid URL for symbol: \(symbol)")
+            print("Invalid URL for symbol: \(adjustedSymbol)")
             completion(nil)
             return
         }
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
-                print("Error fetching stock data for \(symbol): \(error?.localizedDescription ?? "Unknown error")")
+                print("Error fetching stock data for \(adjustedSymbol): \(error?.localizedDescription ?? "Unknown error")")
                 completion(nil)
                 return
             }
@@ -82,14 +92,14 @@ extension ViewController{
                     if let dataDict = (jsonObject as? [String: Any])?["data"] as? [String: Any],
                        let price = dataDict["amount"] as? String,
                        let priceDouble = Double(price) {
-                        print("Fetched price for \(symbol): \(priceDouble)")
+                        print("Fetched price for \(adjustedSymbol): \(priceDouble)")
                         completion(priceDouble)
                     } else {
-                        print("Error parsing Coinbase data for \(symbol)")
+                        print("Error parsing Coinbase data for \(adjustedSymbol)")
                         completion(nil)
                     }
                 } catch {
-                    print("Error parsing JSON from Coinbase for \(symbol): \(error.localizedDescription)")
+                    print("Error parsing JSON from Coinbase for \(adjustedSymbol): \(error.localizedDescription)")
                     completion(nil)
                 }
             } else {
@@ -98,14 +108,14 @@ extension ViewController{
                     let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
                     if let dataDict = jsonObject as? [String: Any],
                        let currentPrice = dataDict["c"] as? Double, currentPrice != 0 {
-                        print("Fetched price for \(symbol): \(currentPrice)")
+                        print("Fetched price for \(adjustedSymbol): \(currentPrice)")
                         completion(currentPrice)
                     } else {
-                        print("Error or Zero value in Finnhub data for \(symbol). Response: \(String(data: data, encoding: .utf8) ?? "N/A")")
+                        print("Error or Zero value in Finnhub data for \(adjustedSymbol). Response: \(String(data: data, encoding: .utf8) ?? "N/A")")
                         completion(nil)
                     }
                 } catch {
-                    print("Error parsing JSON from Finnhub for \(symbol): \(error.localizedDescription)")
+                    print("Error parsing JSON from Finnhub for \(adjustedSymbol): \(error.localizedDescription)")
                     completion(nil)
                 }
             }
@@ -147,11 +157,16 @@ extension ViewController{
                                 self.showStockNotFoundAlert()
                                 return
                             }
+
+                            // Assuming textViews represent your stock entries and their order
+                            let newIndex = self.textViews.count
+
                             self.createTextView(stockName: companyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: price, platform: platform)
-                            
-                            // Save the created entry to UserDefaults
-                            self.saveStockEntryToUserDefaults(stockName: companyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: price, platform: platform)
+
+                            // Save the created entry to UserDefaults, including the new index
+                            self.saveStockEntryToUserDefaults(stockName: companyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: price, platform: platform, index: newIndex)
                         }
+
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -210,9 +225,13 @@ extension ViewController{
                         // Use the full name of the cryptocurrency instead of its symbol
                         strongSelf.createTextView(stockName: cryptocurrencyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: priceDouble, platform: platform)
                         
-                        // Save the created entry to UserDefaults (Added this line)
-                        strongSelf.saveStockEntryToUserDefaults(stockName: cryptocurrencyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: priceDouble, platform: platform)
+                        // Determine the new index for the entry
+                        let newIndex = strongSelf.textViews.count
+                        
+                        // Save the created entry to UserDefaults, including the new index
+                        strongSelf.saveStockEntryToUserDefaults(stockName: cryptocurrencyName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: priceDouble, platform: platform, index: newIndex)
                     }
+
                 } else {
                     DispatchQueue.main.async {
                         strongSelf.showStockNotFoundAlert()
@@ -226,33 +245,46 @@ extension ViewController{
         }.resume()
     }
     
-    public func refreshStockData() {
-        refreshControl.beginRefreshing()
-        scrollView.setContentOffset(CGPoint(x: 0, y: -refreshControl.frame.size.height), animated: true)
-        
+    public func refreshStockData(silent: Bool = false) {
+        let dispatchGroup = DispatchGroup()
+
+        if !silent {
+            DispatchQueue.main.async {
+                self.refreshControl.beginRefreshing()
+                self.scrollView.setContentOffset(CGPoint(x: 0, y: -self.refreshControl.frame.size.height), animated: true)
+            }
+        }
+
         for (textView, companyName) in textViewToStockSymbol {
-            // Check if companyName is a cryptocurrency name and get the symbol
             let stockSymbol: String
             if let symbol = cryptocurrencySymbolMapping[companyName] {
                 stockSymbol = symbol
             } else {
                 stockSymbol = stockSymbolMapping[companyName] ?? companyName
             }
-            
+
+            dispatchGroup.enter()
             fetchStockPrice(for: stockSymbol) { [weak self] newPrice in
+                defer { dispatchGroup.leave() }
+
                 DispatchQueue.main.async {
                     guard let newPrice = newPrice else {
                         print("Failed to fetch new price for \(stockSymbol)")
-                        self?.refreshControl.endRefreshing()
                         return
                     }
-                    
+
                     self?.updateTextView(textView, withNewPrice: newPrice)
-                    self?.refreshControl.endRefreshing()
                 }
             }
         }
+
+        dispatchGroup.notify(queue: .main) {
+            if !silent {
+                self.refreshControl.endRefreshing()
+            }
+        }
     }
+
 
     
     @objc public func refreshStockData(_ sender: UIRefreshControl) {

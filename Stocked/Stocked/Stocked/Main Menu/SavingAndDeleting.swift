@@ -11,54 +11,59 @@ import UIKit
 
 let userDefaultsKey = "SavedStockEntries"  // Create a key for UserDefaults to uniquely identify the saved data
 
+struct StockData {
+    var stockName: String
+    var initialInvestment: String
+    var feesPaid: String
+    var pricePerShare: String
+    var stockPrice: Double
+    var platform: String
+}
+
+var textViewToStockData: [UITextView: StockData] = [:]
 
 
 extension ViewController{
     
     // Function to save the user's data to UserDefaults
-    public func saveStockEntryToUserDefaults(stockName: String, initialInvestment: String, feesPaid: String, pricePerShare: String, stockPrice: Double, platform: String) {
-        print("Saving stock entry: \(stockName)")
-        // Create a dictionary to represent a stock entry
+    public func saveStockEntryToUserDefaults(stockName: String, initialInvestment: String, feesPaid: String, pricePerShare: String, stockPrice: Double, platform: String, index: Int) {
         let stockEntry: [String: Any] = [
             "stockName": stockName,
             "initialInvestment": initialInvestment,
             "feesPaid": feesPaid,
             "pricePerShare": pricePerShare,
             "stockPrice": stockPrice,
-            "platform": platform  // Include platform information
+            "platform": platform,
+            "index": index  // Include the order or index of the textView
         ]
-
         
-        // Load existing saved data or create an empty array if it doesn't exist
         var savedEntries = UserDefaults.standard.array(forKey: userDefaultsKey) as? [[String: Any]] ?? []
-        
-        // Add the new stock entry to the array
-        savedEntries.append(stockEntry)
-        
-        // Save the updated array to UserDefaults
+        if index < savedEntries.count {
+            savedEntries[index] = stockEntry  // Update existing entry
+        } else {
+            savedEntries.append(stockEntry)  // Add new entry
+        }
         UserDefaults.standard.set(savedEntries, forKey: userDefaultsKey)
-        
-        // Synchronize UserDefaults to ensure data is saved immediately
-        UserDefaults.standard.synchronize()
     }
+
     
     // Function to load saved data from UserDefaults
     public func loadSavedData() {
         if let savedEntries = UserDefaults.standard.array(forKey: userDefaultsKey) as? [[String: Any]] {
-            for entry in savedEntries {
-                // Extract necessary information from each entry
+            let sortedEntries = savedEntries.sorted(by: { ($0["index"] as? Int ?? 0) < ($1["index"] as? Int ?? 0) })
+            for entry in sortedEntries {
                 if let stockName = entry["stockName"] as? String,
                    let initialInvestment = entry["initialInvestment"] as? String,
                    let feesPaid = entry["feesPaid"] as? String,
                    let pricePerShare = entry["pricePerShare"] as? String,
                    let stockPrice = entry["stockPrice"] as? Double,
                    let platform = entry["platform"] as? String {
-                    // Recreate the UITextView with the saved data
                     createTextView(stockName: stockName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: stockPrice, platform: platform)
                 }
             }
         }
     }
+
 
     
     
@@ -136,5 +141,13 @@ extension ViewController{
     }
     
     
-    
+    public func saveTextViewsOrder() {
+        for (index, textView) in textViews.enumerated() {
+            guard let stockData = textViewToStockData[textView] else { continue }
+            
+            saveStockEntryToUserDefaults(stockName: stockData.stockName, initialInvestment: stockData.initialInvestment, feesPaid: stockData.feesPaid, pricePerShare: stockData.pricePerShare, stockPrice: stockData.stockPrice, platform: stockData.platform, index: index)
+        }
+    }
+
+
 }

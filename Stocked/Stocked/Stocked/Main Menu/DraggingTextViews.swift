@@ -34,10 +34,14 @@ extension ViewController{
             stopScrollTimer()
             updateTextViewPosition(textView)
             
+            
             // Update the position of the indicator
             if let indicator = selectionIndicators[textView] {
                 updateIndicatorPosition(indicator, relativeTo: textView)
             }
+            // Save the new order of textViews
+            saveTextViewsOrder()
+            
         default:
             break
         }

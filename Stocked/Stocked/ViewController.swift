@@ -9,6 +9,35 @@ import UIKit
 import AudioToolbox // For vibration
 
 
+class TextViewManager {
+    static let shared = TextViewManager()
+    
+    var textViews: [UITextView] = []
+    
+    var cumulativeDataKey = "cumulativeData"
+    var cumulativeData: [DataPoint] = [] {
+        
+        didSet {
+            saveCumulativeData()
+            }
+        
+    }
+
+    private init() {} // Private initializer to ensure only one instance is created
+}
+
+//For textviewmanager:
+private func saveCumulativeData() {
+        do {
+            let data = try JSONEncoder().encode(TextViewManager.shared.cumulativeData)
+            UserDefaults.standard.set(data, forKey: TextViewManager.shared.cumulativeDataKey)
+        } catch {
+            print("Failed to save cumulative data: \(error)")
+        }
+    }
+
+
+
 class ViewController: UIViewController, UITextViewDelegate {
     
     //Naming the view that corresponds to the mainMenu
@@ -18,7 +47,19 @@ class ViewController: UIViewController, UITextViewDelegate {
     
     let textViewHeight: CGFloat = 100
     let spacing: CGFloat = 7 // Spacing between text views
-    var textViews: [UITextView] = [] // Array to keep track of text views
+   
+    var textViews: [UITextView] {
+          get {
+              return TextViewManager.shared.textViews
+          }
+          set {
+              TextViewManager.shared.textViews = newValue
+          }
+      }
+    
+    
+    var refreshTimer: Timer?
+    
     var originalTextViewHeight: CGFloat = 100 // Set your initial height here
     var textViewToStockSymbol: [UITextView: String] = [:]
     var stockPrices: [String: Double] = [:]
@@ -122,34 +163,68 @@ class ViewController: UIViewController, UITextViewDelegate {
         
         self.view.addSubview(overlayView)
         
-        setupPlatformButton()
+        //setupPlatformButton()
         setupThemeButton()
-        setupLionButton()
         
         // Initialize the "Exit" button
-           exitButton = UIButton(type: .system)
-           exitButton.setTitle("Exit", for: .normal)
-           exitButton.addTarget(self, action: #selector(exitThemeMode), for: .touchUpInside)
-           
-           // Position it where the "Settings" button is
-           exitButton.frame = settingsButton.frame
-           
-           // Hide it initially
-           exitButton.isHidden = true
-           
-           // Add it to the view
-           view.addSubview(exitButton)
+        exitButton = UIButton(type: .system)
+        exitButton.setTitle("Exit", for: .normal)
+        exitButton.addTarget(self, action: #selector(exitThemeMode), for: .touchUpInside)
         
-     
-            setupPlatformsButton() // Assuming you have a method to setup and add the Platforms button
+        // Position it where the "Settings" button is
+        exitButton.frame = settingsButton.frame
+        
+        // Hide it initially
+        exitButton.isHidden = true
+        
+        // Add it to the view
+        view.addSubview(exitButton)
+        
+        
+        setupPlatformsButton() // Assuming you have a method to setup and add the Platforms button
         
         if let savedPlatforms = UserDefaults.standard.array(forKey: "SavedPlatforms") as? [String] {
-               platforms = savedPlatforms
-           }
+            platforms = savedPlatforms
+        }
         
         refreshStockData()
-            
+        
+        // Assuming your ViewController is within a UITabBarController
+        if let tabBarController = self.tabBarController {
+            tabBarController.delegate = self
         }
+        
+        
+        // Add swipe gesture recognizer to detect right swipe
+        let swipeRightGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeGesture(_:)))
+        swipeRightGesture.direction = .right
+        view.addGestureRecognizer(swipeRightGesture)
+        
+        // Other setup code...
+        // Setup the timer to call refreshStockData every 40 seconds
+        refreshTimer = Timer.scheduledTimer(timeInterval: 40, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
+    }
+    
+    deinit {
+            // Invalidate the timer when the view controller is de-allocated to prevent it from firing if the view controller is no longer in memory
+            refreshTimer?.invalidate()
+        }
+    
+    @objc func timerFired(_ timer: Timer) {
+        // Call the refreshStockData method without parameters
+        refreshStockData(silent: true)
+        //Update total position value
+        updateTotalPositionValue()
+    }
+    
+    
+    
+       @objc func handleSwipeGesture(_ gesture: UISwipeGestureRecognizer) {
+           if gesture.direction == .right {
+               // Trigger the platformButton tapped action
+               PlatformButtonTapped()
+           }
+       }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -206,27 +281,24 @@ class ViewController: UIViewController, UITextViewDelegate {
     
     @IBAction func editButtonTapped(_ sender: UIButton) {
         let generator = UIImpactFeedbackGenerator(style: .rigid)
-          generator.prepare() // This line is optional; it preloads the necessary resources to reduce latency
-          generator.impactOccurred()
-        
-        
-        isEditingMode = !isEditingMode
-        updateTextViewsForEditingMode()
-        
-        
-        // Update the visibility of the delete button based on the editing mode
-        deleteButton.isHidden = !isEditingMode
-        
-        // Disable the "Add" button when entering edit mode
-        AddButton.isEnabled = !isEditingMode
-        
-        // Optionally change the button's title based on the state
-        
-        sender.setTitle(isEditingMode ? "Done" : "Edit", for: .normal)
-        
-        // Update the visibility of the settings button
-        settingsButton.isHidden = isEditingMode
-    }
+            generator.prepare() // This line is optional; it preloads the necessary resources to reduce latency
+            generator.impactOccurred()
+
+            isEditingMode = !isEditingMode
+            updateTextViewsForEditingMode()
+
+            // Update the visibility of the delete button based on the editing mode AND whether any text views are selected
+            deleteButton.isHidden = !isEditingMode || selectedTextViews.isEmpty
+
+            // Disable the "Add" button when entering edit mode
+            AddButton.isEnabled = !isEditingMode
+
+            // Optionally change the button's title based on the state
+            sender.setTitle(isEditingMode ? "Done" : "Edit", for: .normal)
+
+            // Update the visibility of the settings button
+            settingsButton.isHidden = isEditingMode
+        }
     
     //Creating an outlet for the "Edit" button
     @IBOutlet weak var editButton: UIButton!
@@ -246,11 +318,6 @@ class ViewController: UIViewController, UITextViewDelegate {
     
     
     
-    
-
-    
-    
-
     
 
     

@@ -15,6 +15,11 @@ extension ViewController{
             return total + positionValue
         }
         
+        
+        // Assuming you're using the custom struct approach
+        let newDataPoint = DataPoint(value: totalPositionValue, timestamp: Date())
+        TextViewManager.shared.cumulativeData.append(newDataPoint)
+        
         totalPositionValueLabel.text = String(format: "Total Position Value: $%.2f", totalPositionValue)
         
         print("Total Position Value: \(totalPositionValue)")

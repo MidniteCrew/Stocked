@@ -82,50 +82,64 @@ import UIKit
 extension ViewController{
     
     
-    
-    public func presentCryptocurrencyEntryAlert() {
+    public func presentCryptocurrencyEntryAlert(withPreviousInput input: [String?]? = nil) {
         let alertController = UIAlertController(title: "New Entry", message: "Enter details", preferredStyle: .alert)
         
-        // Add text fields for stock symbol, initial investment, fees, and price per share
+        var textFields: [UITextField] = [] // Store text fields locally
+        
+        // Add text fields for cryptocurrency details
         alertController.addTextField { textField in
             textField.placeholder = "Ticker"
+            if let previousInput = input?[0] {
+                textField.text = previousInput
+            }
+            textFields.append(textField)
         }
         alertController.addTextField { textField in
             textField.placeholder = "Initial Investment (USD)"
             textField.keyboardType = .decimalPad
+            if let previousInput = input?[1] {
+                textField.text = previousInput
+            }
+            textFields.append(textField)
         }
         alertController.addTextField { textField in
             textField.placeholder = "Fees Paid (USD)"
             textField.keyboardType = .decimalPad
+            if let previousInput = input?[2] {
+                textField.text = previousInput
+            }
+            textFields.append(textField)
         }
         alertController.addTextField { textField in
             textField.placeholder = "Price Per Unit (USD)"
             textField.keyboardType = .decimalPad
+            if let previousInput = input?[3] {
+                textField.text = previousInput
+            }
+            textFields.append(textField)
         }
         // Add a new text field for the Platform input
         alertController.addTextField { textField in
             textField.placeholder = "Platform"
+            if let previousInput = input?[4] {
+                textField.text = previousInput
+            }
+            textFields.append(textField)
         }
         
-        
-        let confirmAction = UIAlertAction(title: "Create", style: .default) { [weak self] _ in
-            guard let self = self,
-                  let textFields = alertController.textFields,
-                  let stockSymbol = textFields[0].text, !stockSymbol.isEmpty,
-                  let initialInvestment = textFields[1].text, !initialInvestment.isEmpty,
-                  let feesPaid = textFields[2].text, !feesPaid.isEmpty,
-                  let pricePerShare = textFields[3].text, !pricePerShare.isEmpty,
-                  let platform = textFields[4].text, !platform.isEmpty else {
-                // Handle invalid input
-                return
+        let confirmAction = UIAlertAction(title: "Create", style: .default) { _ in
+            guard let stockSymbol = textFields[0].text, !stockSymbol.isEmpty,
+                let initialInvestment = textFields[1].text, !initialInvestment.isEmpty,
+                let feesPaid = textFields[2].text, !feesPaid.isEmpty,
+                let pricePerShare = textFields[3].text, !pricePerShare.isEmpty,
+                let platform = textFields[4].text, !platform.isEmpty else {
+                    // Show the alert again with the previous input
+                    self.presentCryptocurrencyEntryAlert(withPreviousInput: textFields.map { $0.text })
+                    return
             }
-            // Append the platform name to the array and save to UserDefaults
-            self.platforms.append(platform)
-            UserDefaults.standard.set(platforms, forKey: "SavedPlatforms")
-            UserDefaults.standard.synchronize()
             
-            
-            
+            // Proceed with creating the text view and other actions
             self.fetchStockDetails(for: stockSymbol, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, platform: platform)
         }
         
@@ -136,7 +150,7 @@ extension ViewController{
         
         present(alertController, animated: true)
     }
-    
+
     public func centerAlignedParagraphStyle() -> NSMutableParagraphStyle {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
@@ -162,6 +176,8 @@ extension ViewController{
             let startingOffset: CGFloat = 150 // Adjust this value to position the first UITextView lower
                
             
+        let stockData = StockData(stockName: stockName, initialInvestment: initialInvestment, feesPaid: feesPaid, pricePerShare: pricePerShare, stockPrice: stockPrice, platform: platform)
+            textViewToStockData[newTextView] = stockData
         
             // Calculate the y position based on existing text views and the starting offset
             let yOffset = self.textViews.reduce(startingOffset) { $0 + $1.frame.height + self.spacing }
