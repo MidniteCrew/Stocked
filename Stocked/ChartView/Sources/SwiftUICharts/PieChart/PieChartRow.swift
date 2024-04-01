@@ -30,15 +30,19 @@ public struct PieChartRow : View {
     
     @Binding var showValue: Bool
     @Binding var currentValue: Double
+    @Binding var isSliceSelected: Bool
+
     
     @State private var currentTouchedIndex = -1 {
         didSet {
             if oldValue != currentTouchedIndex {
                 showValue = currentTouchedIndex != -1
                 currentValue = showValue ? slices[currentTouchedIndex].value : 0
+                isSliceSelected = currentTouchedIndex != -1  // Update this binding based on slice selection
             }
         }
     }
+
     
     public var body: some View {
         GeometryReader { geometry in
@@ -68,14 +72,5 @@ public struct PieChartRow : View {
 }
 
 #if DEBUG
-struct PieChartRow_Previews : PreviewProvider {
-    static var previews: some View {
-        Group {
-            PieChartRow(data:[8,23,54,32,12,37,7,23,43], backgroundColor: Color(red: 252.0/255.0, green: 236.0/255.0, blue: 234.0/255.0), accentColor: Color(red: 225.0/255.0, green: 97.0/255.0, blue: 76.0/255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-                .frame(width: 100, height: 100)
-            PieChartRow(data:[0], backgroundColor: Color(red: 252.0/255.0, green: 236.0/255.0, blue: 234.0/255.0), accentColor: Color(red: 225.0/255.0, green: 97.0/255.0, blue: 76.0/255.0), showValue: Binding.constant(false), currentValue: Binding.constant(0))
-                .frame(width: 100, height: 100)
-        }
-    }
-}
+
 #endif

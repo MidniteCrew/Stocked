@@ -131,11 +131,11 @@ public struct Styles {
     
     public static let custom_style = ChartStyle(
         backgroundColor: Color(red: 10/255.0, green: 10/255.0, blue: 10/255.0),
-        accentColor: Color(UIColor(red: 50/255, green: 90/255, blue: 200/255, alpha: 1.0)),
+        accentColor: Color(UIColor(red: 103/255.0, green: 205/255.0, blue: 103/255.0, alpha: 1.0)),
         secondGradientColor: Colors.GradientPurple,
         textColor: Color.white,
         legendTextColor: Color.gray,
-        dropShadowColor: Color.white.opacity(0.30))
+        dropShadowColor: Color.black)
     
 }
 

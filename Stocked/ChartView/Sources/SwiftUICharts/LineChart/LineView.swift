@@ -8,6 +8,19 @@
 
 import SwiftUI
 
+class FirstDataPointSingleton {
+    static let shared = FirstDataPointSingleton()
+    
+    var firstDataPoint: Double?
+
+    private init() {} // Private initializer to ensure singleton instance
+    
+    func initialize(with data: [Double]) {
+        self.firstDataPoint = data.first
+    }
+}
+
+
 public struct LineView: View {
     @ObservedObject var data: ChartData
     public var title: String?
@@ -43,6 +56,8 @@ public struct LineView: View {
         self.valueSpecifier = valueSpecifier!
         self.legendSpecifier = legendSpecifier!
         self.darkModeStyle = style.darkModeStyle != nil ? style.darkModeStyle! : Styles.lineViewDarkMode
+        // Initialize the FirstDataPointSingleton with the first data point
+        FirstDataPointSingleton.shared.initialize(with: data)
     }
     
     // Function to estimate the width of the label for the minimum Y-axis value

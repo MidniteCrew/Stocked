@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		750F90AC2BA4F14D002E0583 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = 750F90AB2BA4F14D002E0583 /* SwiftUICharts */; };
 		750F90AE2BA513C1002E0583 /* PieChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 750F90AD2BA513C1002E0583 /* PieChart.swift */; };
+		751B61AF2BB9A82500A08E63 /* RollingText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751B61AE2BB9A82500A08E63 /* RollingText.swift */; };
+		751B61B22BB9A89200A08E63 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 751B61B12BB9A89200A08E63 /* ContentView.swift */; };
 		753FA7872BA52328002C22F0 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 753FA7862BA52328002C22F0 /* Graph.swift */; };
 		7543A0B42B92D73300075C56 /* LionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7543A0B32B92D73200075C56 /* LionViewController.swift */; };
 		75464CBE2B817C6500BC9FD6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75464CBD2B817C6500BC9FD6 /* Theme.swift */; };
@@ -29,7 +31,7 @@
 		75A6A7F22B843044004A637A /* AddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A6A7F12B843044004A637A /* AddButton.swift */; };
 		75A6A7F42B84322F004A637A /* SideMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75A6A7F32B84322F004A637A /* SideMenu.swift */; };
 		75CB189B2B9E92B700000B95 /* TabBarIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB189A2B9E92B700000B95 /* TabBarIndex.swift */; };
-		75F37BCB2BA5527E00CE955A /* smallGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F37BCA2BA5527E00CE955A /* smallGraph.swift */; };
+		75F37BCB2BA5527E00CE955A /* MultiLineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75F37BCA2BA5527E00CE955A /* MultiLineChart.swift */; };
 		75FBD6792B37682A00EE0B9E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75FBD6772B37682A00EE0B9E /* Main.storyboard */; };
 		75FBD67C2B37682A00EE0B9E /* Stocked.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 75FBD67A2B37682A00EE0B9E /* Stocked.xcdatamodeld */; };
 		75FBD6812B37682B00EE0B9E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75FBD67F2B37682B00EE0B9E /* LaunchScreen.storyboard */; };
@@ -58,6 +60,8 @@
 /* Begin PBXFileReference section */
 		750F90A62BA4F0A6002E0583 /* ChartView */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChartView; sourceTree = SOURCE_ROOT; };
 		750F90AD2BA513C1002E0583 /* PieChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChart.swift; sourceTree = "<group>"; };
+		751B61AE2BB9A82500A08E63 /* RollingText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollingText.swift; sourceTree = "<group>"; };
+		751B61B12BB9A89200A08E63 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		753FA7862BA52328002C22F0 /* Graph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 		7543A0B32B92D73200075C56 /* LionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LionViewController.swift; sourceTree = "<group>"; };
 		75464CBD2B817C6500BC9FD6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -74,7 +78,7 @@
 		75A6A7F12B843044004A637A /* AddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddButton.swift; sourceTree = "<group>"; };
 		75A6A7F32B84322F004A637A /* SideMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenu.swift; sourceTree = "<group>"; };
 		75CB189A2B9E92B700000B95 /* TabBarIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarIndex.swift; sourceTree = "<group>"; };
-		75F37BCA2BA5527E00CE955A /* smallGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = smallGraph.swift; sourceTree = "<group>"; };
+		75F37BCA2BA5527E00CE955A /* MultiLineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiLineChart.swift; sourceTree = "<group>"; };
 		75FBD66E2B37682A00EE0B9E /* Stocked.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stocked.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75FBD6712B37682A00EE0B9E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		75FBD6732B37682A00EE0B9E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -136,6 +140,15 @@
 			path = "Tab Bar";
 			sourceTree = "<group>";
 		};
+		751B61B02BB9A86D00A08E63 /* Rolling Text Animation */ = {
+			isa = PBXGroup;
+			children = (
+				751B61AE2BB9A82500A08E63 /* RollingText.swift */,
+				751B61B12BB9A89200A08E63 /* ContentView.swift */,
+			);
+			path = "Rolling Text Animation";
+			sourceTree = "<group>";
+		};
 		7543A0B52B92D76D00075C56 /* Lion */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +160,7 @@
 		75464CBA2B81793600BC9FD6 /* Functionalities  */ = {
 			isa = PBXGroup;
 			children = (
+				751B61B02BB9A86D00A08E63 /* Rolling Text Animation */,
 				75A6A7E62B842C53004A637A /* Main Menu */,
 				751267692B93B018003A9BF8 /* Tab Bar */,
 			);
@@ -169,7 +183,7 @@
 				758428332B9EAC0700B63448 /* AnalyticsController.swift */,
 				750F90AD2BA513C1002E0583 /* PieChart.swift */,
 				753FA7862BA52328002C22F0 /* Graph.swift */,
-				75F37BCA2BA5527E00CE955A /* smallGraph.swift */,
+				75F37BCA2BA5527E00CE955A /* MultiLineChart.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -408,6 +422,7 @@
 			files = (
 				758428342B9EAC0700B63448 /* AnalyticsController.swift in Sources */,
 				75A6A7F02B842F06004A637A /* EditButton.swift in Sources */,
+				751B61B22BB9A89200A08E63 /* ContentView.swift in Sources */,
 				75A6A7EC2B842E01004A637A /* SavingAndDeleting.swift in Sources */,
 				75A6A7F42B84322F004A637A /* SideMenu.swift in Sources */,
 				7543A0B42B92D73300075C56 /* LionViewController.swift in Sources */,
@@ -421,8 +436,9 @@
 				75CB189B2B9E92B700000B95 /* TabBarIndex.swift in Sources */,
 				758428372B9EAD3C00B63448 /* CalendarController.swift in Sources */,
 				75514BD32B968337002874B2 /* ViewController.swift in Sources */,
+				751B61AF2BB9A82500A08E63 /* RollingText.swift in Sources */,
 				75A6A7EE2B842E6C004A637A /* FetchingDetails.swift in Sources */,
-				75F37BCB2BA5527E00CE955A /* smallGraph.swift in Sources */,
+				75F37BCB2BA5527E00CE955A /* MultiLineChart.swift in Sources */,
 				75A6A7EA2B842DA0004A637A /* DraggingTextViews.swift in Sources */,
 				75464CBE2B817C6500BC9FD6 /* Theme.swift in Sources */,
 				75A6A7E42B842C07004A637A /* TotalPositionValue.swift in Sources */,

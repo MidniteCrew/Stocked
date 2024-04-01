@@ -94,9 +94,9 @@ extension ViewController{
         var profitOrLossColor: UIColor
         
         if totalProfitOrLoss > 0 {
-            profitOrLossColor = .green
+            profitOrLossColor = UIColor(red: 103/255.0, green: 205/255.0, blue: 103/255.0, alpha: 1.0)
         } else if totalProfitOrLoss < 0 {
-            profitOrLossColor = .red
+            profitOrLossColor = UIColor(red: 234/255.0, green: 85/255.0, blue: 69/255.0, alpha: 1.0)
         } else {
             profitOrLossColor = .white
         }

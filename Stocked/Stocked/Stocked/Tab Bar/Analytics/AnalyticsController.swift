@@ -22,7 +22,7 @@ class TimeRangeManager {
             startDate = Calendar.current.date(byAdding: .hour, value: -1, to: Date())!
 
             var intervalDates: [Date] = []
-            for offset in stride(from: 0, to: 60 * 60, by: 15) { // 60 minutes * 60 seconds, every 15 seconds
+            for offset in stride(from: 0, to: 60 * 60, by: 5) { // 60 minutes * 60 seconds, every 15 seconds
                 if let intervalDate = Calendar.current.date(byAdding: .second, value: offset, to: startDate) {
                     intervalDates.append(intervalDate)
                 }
@@ -477,9 +477,9 @@ class AnalyticsController: UIViewController {
             return UIHostingController(coder: coder, rootView: graphView)
         }
     
-    
+    //MultiLineChart
     @IBSegueAction func smallGraphSwiftUIView(_ coder: NSCoder) -> UIViewController? {
-        return UIHostingController(coder: coder, rootView: smallGraph())
+        return UIHostingController(coder: coder, rootView: MultiLineChart())
     }
     
     

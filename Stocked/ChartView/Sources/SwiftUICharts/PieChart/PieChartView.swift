@@ -17,7 +17,13 @@ public struct PieChartView : View {
     public var dropShadow: Bool
     public var valueSpecifier:String
     
+    var totalDataSum: Double {
+        data.reduce(0, +)
+    }
+    
     @State private var showValue = false
+    @State private var sliceSelected: Bool = false  // Add this line to track selection
+
     @State private var currentValue: Double = 0 {
         didSet{
             if(oldValue != self.currentValue && self.showValue) {
@@ -40,38 +46,57 @@ public struct PieChartView : View {
     }
     
     public var body: some View {
-        ZStack{
-            Rectangle()
-                .fill(self.style.backgroundColor)
-                .cornerRadius(20)
-                .shadow(color: self.style.dropShadowColor, radius: self.dropShadow ? 12 : 0)
-            VStack(alignment: .leading){
-                HStack{
-                    if(!showValue){
-                        Text(self.title)
-                            .font(.title)
-                            .foregroundColor(self.style.textColor)
-                    }else{
-                        Text("\(self.currentValue, specifier: self.valueSpecifier)")
-                            .font(.title)
-                            .foregroundColor(self.style.textColor)
+        VStack {
+            // Use a ZStack to overlay the Bitcoin label on an empty space
+            ZStack {
+                    Text("Bitcoin")
+                        .font(.title)
+                        .underline() // This underlines the text
+                        .opacity(sliceSelected ? 1 : 0) // Control visibility with opacity
+                        .padding(.vertical, 10) // Increase vertical padding
+                    Spacer() // Keeps the space when the label is not visible
+                   }
+                        .frame(height: 44) // Adjust the frame height to accommodate the increased padding
+
+            
+            ZStack{
+                Rectangle()
+                    .fill(self.style.backgroundColor)
+                    .cornerRadius(20)
+                    .shadow(color: self.style.dropShadowColor, radius: self.dropShadow ? 12 : 0)
+                VStack(alignment: .leading){
+                    HStack{
+                        if(!showValue){
+                            Text(self.title)
+                                .font(.title)
+                                .foregroundColor(self.style.textColor)
+                        }else{
+                            Text("\(self.currentValue, specifier: self.valueSpecifier)")
+                                .font(.title) // Font for the currentValue
+                                .foregroundColor(self.style.textColor) // Assuming you have a style object with a textColor property
+                            + Text(" (\(String(format: "%.2f%%", (currentValue / totalDataSum) * 100)))")
+                                .font(.headline) // Slightly smaller font for the percentage
+                                .foregroundColor(self.style.textColor)
+                            
+                        }
+                        Spacer()
+                        Image(systemName: "chart.pie.fill")
+                            .imageScale(.large)
+                            .foregroundColor(self.style.legendTextColor)
+                    }.padding()
+                    PieChartRow(data: data, backgroundColor: self.style.backgroundColor, accentColor: self.style.accentColor, showValue: $showValue, currentValue: $currentValue,  isSliceSelected: $sliceSelected )
+                        .foregroundColor(self.style.accentColor).padding(self.legend != nil ? 0 : 12).offset(y:self.legend != nil ? 0 : -10)
+                    if(self.legend != nil) {
+                        Text(self.legend!)
+                            .font(.headline)
+                            .foregroundColor(self.style.legendTextColor)
+                            .padding()
                     }
-                    Spacer()
-                    Image(systemName: "chart.pie.fill")
-                        .imageScale(.large)
-                        .foregroundColor(self.style.legendTextColor)
-                }.padding()
-                PieChartRow(data: data, backgroundColor: self.style.backgroundColor, accentColor: self.style.accentColor, showValue: $showValue, currentValue: $currentValue)
-                    .foregroundColor(self.style.accentColor).padding(self.legend != nil ? 0 : 12).offset(y:self.legend != nil ? 0 : -10)
-                if(self.legend != nil) {
-                    Text(self.legend!)
-                        .font(.headline)
-                        .foregroundColor(self.style.legendTextColor)
-                        .padding()
+                    
                 }
-                
-            }
-        }.frame(width: self.formSize.width, height: self.formSize.height)
+            }.frame(width: self.formSize.width, height: self.formSize.height)
+            
+        }
     }
 }
 

@@ -416,7 +416,7 @@ extension ViewController{
             attributedText.replaceCharacters(in: numericValueRange, with: updatedProfitLossString)
 
             // Update the color based on profit or loss
-            let profitOrLossColor: UIColor = profitOrLoss >= 0 ? .green : .red
+            let profitOrLossColor: UIColor = profitOrLoss >= 0 ? UIColor(red: 103/255.0, green: 205/255.0, blue: 103/255.0, alpha: 1.0) : UIColor(red: 234/255.0, green: 85/255.0, blue: 69/255.0, alpha: 1.0)
             attributedText.addAttribute(.foregroundColor, value: profitOrLossColor, range: NSRange(location: numericValueStartIndex, length: updatedProfitLossString.count))
         }
     }

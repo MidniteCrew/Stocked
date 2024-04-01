@@ -167,7 +167,7 @@ extension ViewController: UITabBarControllerDelegate{
             valueLabel.textAlignment = .right
             valueLabel.frame = CGRect(x: buttonXPosition + buttonWidth - 150, y: startingYPosition, width: 150, height: buttonHeight)
             valueLabel.backgroundColor = .clear
-            valueLabel.textColor = totalPositionValue > totalInitialInvestment ? .green : .red
+            valueLabel.textColor = totalPositionValue > totalInitialInvestment ? UIColor(red: 103/255.0, green: 205/255.0, blue: 103/255.0, alpha: 1.0) : UIColor(red: 234/255.0, green: 85/255.0, blue: 69/255.0, alpha: 1.0)
             valueLabel.adjustsFontSizeToFitWidth = true
             
             // Add each button to the contentView

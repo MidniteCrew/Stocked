@@ -202,7 +202,7 @@ class ViewController: UIViewController, UITextViewDelegate {
         
         // Other setup code...
         // Setup the timer to call refreshStockData every 40 seconds
-        refreshTimer = Timer.scheduledTimer(timeInterval: 40, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
+        refreshTimer = Timer.scheduledTimer(timeInterval: 25, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
     }
     
     deinit {
